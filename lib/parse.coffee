@@ -19,7 +19,9 @@ internalize = (holder, name, reviver) ->
                 delete value[key]
             else
                 value[key] = replacement
-    reviver.call holder, name, value
+    if typeof reviver == 'function'
+        reviver.call holder, name, value
+    value
 
 lex = ->
     `var token`
@@ -269,8 +271,7 @@ module.exports = (text, reviver) ->
         parseStates[parseState]()
         unless token.type != 'eof'
             break
-    if typeof reviver == 'function'
-        return internalize({ '': root }, '', reviver)
+    internalize({ '': root }, '', reviver)
     root
 
 lexState = undefined
